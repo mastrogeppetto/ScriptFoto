@@ -1,6 +1,8 @@
 #!/bin/bash
 # Programma per il backup - ottobre 2018 - riveduto gennaio 2021
 
+
+
 HDUUID="e8a972e4-422a-4a1a-8f40-dcfaeaf4c4db"   # uuid dell'HD (Trekstor)
 # BACKUPUUID="" # uuid del filesystem di backup
 # FILENAME="BACKUP"
@@ -35,67 +37,75 @@ mountpoint=`lsblk -o UUID,MOUNTPOINT | grep $HDUUID | cut -f2- -d' '`
 #fi
 #echo "Ok"
 
-echo -en "\nDry run? (y/N)"
-read
-if [ ! -z $REPLY ] && [ $REPLY == "y" ]
-then
-	echo -e "\nProvo solo il backup, senza eseguirlo"
-	DRYOPT="--dry-run"
-else
-	echo -e "\nOK, le operazioni verranno effettivamente eseguite"
+
+workdir=/media/Foto/Archivio
+
+if [ $# -lt 1 ]
+  then
+    echo "Serve almeno un parametro, il nome della directory (es. '${0##*/} 20210604-PicnicMaranza')"
+    exit 1
 fi
 
-backup="$mountpoint/ArchivioFoto_backup"
 
-# Controlla che la posizione sia corretta
-p=`dirname "$PWD"`
-if [ "$p" != "/media/Foto/Archivio" ]
-then 
-	echo -e "\n### Fail\nDevi essere in una directory dell'archivio delle foto"
-	exit
-fi
-
-data=`basename $PWD | cut -f1 -d-`
-titolo=`basename $PWD | cut -f2 -d-`
-
-if (( ${#data} != 8 )) #formato data scorretto
-then 
-	echo -e "\n### Fail\nIl nome della directory non è valido"
-	echo "Il formato deve essere <data>-<titolo> (data = yyyymmdd)"
-	exit
-fi
-if [ -z $titolo ] #formato titolo scorretto
-then 
-	echo -e "\n### Fail\nIl nome della directory non è valido"
-	echo "Il formato deve essere <data>_<titolo> (data = yyyymmdd)"
-	exit
-fi
-
-echo
-echo Data: $data
-echo Titolo: $titolo
-
-target="$backup"/Archivio/`basename $PWD`
-
-# Regolarizzo i nomi sul master
-exiftool -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
-exiftool '-filename<%f-${model;}.%e' .
-
-if [ -d "$target" ]
-then 
-	echo -e "\nATTENZIONE"
-	echo "La directory esiste già: controllare che non ci siano foto duplicate!"
-	echo -e "\nPremi un tasto per proseguire"
+for dir in "$@"
+do
+	
+	if [ ! -d $workdir/$dir  ]
+	then
+		echo "Non esiste la directory $workdir/$dir"
+		exit 1
+	fi
+	
+	data=`echo $dir | cut -f1 -d-`
+	titolo=`echo $dir | cut -f2 -d-`
+	
+	if (( ${#data} != 8 )) #formato data scorretto
+	then 
+		echo -e "\n### Fail\nIl nome della directory non è valido"
+		echo "Il formato deve essere <data>-<titolo> (data = yyyymmdd)"
+		exit
+	fi
+	if [ -z $titolo ] #formato titolo scorretto
+	then 
+		echo -e "\n### Fail\nIl nome della directory non è valido"
+		echo "Il formato deve essere <data>_<titolo> (data = yyyymmdd)"
+		exit
+	fi
+	
+	echo
+	echo Data: $data
+	echo Titolo: $titolo
+	
+	cd $workdir/$dir
+	
+	echo -e "\nProcedo? (a capo per continuare CTRL-C per interrompere)"
+	echo -n ">"
 	read
-	( 
-		cd "$target"
-		# Regolarizz i nomi sul backup
-		exiftool -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
-		exiftool '-filename<%f-${model;}.%e' .
-	)
-fi
+	
+	backup="$mountpoint/ArchivioFoto_backup"
+	target="$backup"/Archivio/$dir
+	
+	# Regolarizzo i nomi sul master
+	exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
+	exiftool -q -q '-filename<%f-${model;}.%e' .
+	
+	if [ -d "$target" ]
+	then 
+		echo -e "\nATTENZIONE"
+		echo "La directory esiste già: controllare che non ci siano foto duplicate!"
+		echo -e "\nPremi un tasto per proseguire"
+		read
+		( 
+			cd "$target"
+			# Regolarizzo i nomi sul backup (-q -q serve a eliminare warning)
+			exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
+			exiftool -q -q '-filename<%f-${model;}.%e' .
+		)
+	fi
+	
+	rsync -auv . "$target"
 
-rsync -auv $DRYOPT . "$target"
+done
 
 #rsync -auv $DRYOPT /Foto/ArchivioFoto/ --exclude-from=excludeFile.txt "$backup" |
 #  tee /Foto/ArchivioFoto/$RSYNCLOG

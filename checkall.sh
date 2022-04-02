@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-archivio=Archivio
+#archivio=Archivio
 backup=/media/Backup/ArchivioFoto_backup/Archivio/
 workdir=/media/Foto/Archivio
 
