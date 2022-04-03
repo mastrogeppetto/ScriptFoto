@@ -58,13 +58,13 @@ done
 echo -e "Fine verifica nome directory: $n problemi"
 
 echo
-read -r -p "# Ricalcolo gli md5 dei file? (Sn)" input
+read -r -p "# Ricalcolo gli md5 dei file? " input
 case $input in
     [sS][Iiì]|[sS])
 	echo "Sì"
 	for d in $dirs
 	do
-		echo "Viene calcolato l'md5 veloce, richiede tempo"
+		echo "$d: ricalcolo l'md5, richiede tempo"
 		fast_md5 "$d" > "$d"/md5.lst
 		fast_md5 "$backup"/"$d" > "$backup"/"$d"/md5.lst
 	done

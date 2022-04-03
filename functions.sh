@@ -1,21 +1,22 @@
 #!/bin/bash
 
 function checkdirname {
+	function fail  {
+		echo -e "\n### $d non è valido"
+		echo "Il formato deve essere <data>-<titolo> (data = yyyymmdd)"
+	}
+	
+	trattino=`echo "$1" | tr -dc '-'`
 	data=`basename "$1" | cut -f1 -d-`
 	titolo=`basename "$1" | cut -f2 -d-`
 
-	if (( ${#data} != 8 )) #formato data scorretto
-	then 
-        echo -e "\n### $d non è valido"
-        echo "Il formato deve essere <data>-<titolo> (data = yyyymmdd)"
-        return 1
-	fi
-	if [ -z "$titolo" ] #formato titolo scorretto
-	then 
-        echo -e "\n### Fail\nIl nome della directory non è valido"
-        echo "Il formato deve essere <data>_<titolo> (data = yyyymmdd)"
-        return 1
-	fi
+	# Errore separatori
+	[ ${#trattino} -ne 1 ] && { fail; return 1; }
+	# Formato data scorretto
+	(( ${#data} != 8 )) && { fail; return 1; }
+	#formato titolo scorretto
+	[ -z "$titolo" ] && { fail; return 1; }
+
 	return 0;
 
 #	echo
