@@ -119,16 +119,19 @@ n=0
 for d in $dirs
 do
 	m=0
+	l=""
 	for md5 in `cut -f2 -d";" "$backup"/"$d"/md5.lst | cut -c -32 `
 	do
 		if ! grep $md5 "$d"/md5.lst > /dev/null
 		then
 			let m=m+1
+			l="$l|$md5"
 		fi
 	done
 	if [ $m -gt 0 ]
 	then 
 		echo "[backup-only] $d ($m)"
+		egrep "${l::-1}" "$backup"/"$d"/md5.lst 
 		let n=n+1
 	fi
 done
