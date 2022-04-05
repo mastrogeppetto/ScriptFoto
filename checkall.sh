@@ -3,6 +3,7 @@ set -e
 
 . config.sh
 . functions.sh
+init
 
 cd $workdir
 dirs=`find . -maxdepth 1 -mindepth 1 -type d ! -name Orfani | sort`
@@ -204,4 +205,5 @@ do
 done
 echo "Fine verifica sincronizzazione (passo 6): $n problemi"
 
+close
 

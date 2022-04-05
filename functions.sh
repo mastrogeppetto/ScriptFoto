@@ -1,8 +1,15 @@
 #!/bin/bash
 
+function echocol {
+# indenta un echo del numero di caratteri nel primo parametro
+	tput setaf $1
+	echo "$2"
+	tput sgr0
+}
+
 function checkdirname {
 	function fail  {
-		echo -e "\n### $d non è valido"
+		echo -e "\n### $1 non è un nome valido"
 		echo "Il formato deve essere <data>-<titolo> (data = yyyymmdd)"
 	}
 	
@@ -11,11 +18,11 @@ function checkdirname {
 	titolo=`basename "$1" | cut -f2 -d-`
 
 	# Errore separatori
-	[ ${#trattino} -ne 1 ] && { fail; return 1; }
+	[ ${#trattino} -ne 1 ] && { fail $1; return 1; }
 	# Formato data scorretto
-	(( ${#data} != 8 )) && { fail; return 1; }
+	(( ${#data} != 8 )) && { fail $1; return 1; }
 	#formato titolo scorretto
-	[ -z "$titolo" ] && { fail; return 1; }
+	[ -z "$titolo" ] && { fail $1; return 1; }
 
 	return 0;
 
@@ -25,7 +32,6 @@ function checkdirname {
 }
 #
 
-
 function fast_md5() {
 	(
 		cd "$1"
@@ -33,9 +39,66 @@ function fast_md5() {
 	)
 }
 
+function fix_filename() {
+# Regolarizza i nomi dei file backup (-q -q serve a eliminare warning)
+	exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
+	exiftool -q -q '-filename<%f-${model;}.%e' .
+}
+
 function full_md5() {
 	(
 		cd "$1"
 		find . -type f ! -name "md5.lst" -exec md5sum {} \; | sort
 	)
+}
+
+function init() {
+	if [ -z $workdir_mnt ]
+	then
+		echo "Non configurata la variabile con il filesystem di lavoro"
+		exit 1
+	fi
+	if mountpoint -q $workdir_mnt
+	then
+		echo "Il filesystem di lavoro è già montato"
+	else
+		echo "Monto il filesystem di lavoro"
+		if ! sudo mount $workdir_mnt
+		then
+			echo "Non riesco ad installare il filesystem di lavoro"
+			exit 1
+		fi
+	fi		
+	if [ -z $backup_mnt ]
+	then
+		echo "Non configurata la variabile con il filesystem di backup"
+		exit 1
+	fi
+	if mountpoint -q $backup_mnt
+	then
+		echo "Il filesystem di backup è già montato"
+	else
+		echo "Monto il filesystem di backup"
+		if ! sudo mount $backup_mnt
+		then
+			echo "Non riesco ad installare il filesystem di backup"
+			exit 1
+		fi
+	fi
+	trap ctrl_c INT
+}	
+
+function ctrl_c() { 
+	echo -e "\n** Ricevuto CTRL-C"; 
+	close;
+	exit 0
+} 
+	
+function close() {
+	if mountpoint -q $backup_mnt
+	then
+		echo -e "\nSmonto la directory di backup"
+		sync
+		sudo umount $backup_mnt
+	fi
 }

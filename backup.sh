@@ -1,44 +1,9 @@
 #!/bin/bash
 # Programma per il backup - ottobre 2018 - riveduto gennaio 2021
 
-
-
-HDUUID="e8a972e4-422a-4a1a-8f40-dcfaeaf4c4db"   # uuid dell'HD (Trekstor)
-# BACKUPUUID="" # uuid del filesystem di backup
-# FILENAME="BACKUP"
-MOUNTPOINT="/media/Backup"
-EXCLUDEFILE="exclude_from_backup"
-RSYNCLOG=backup-`date +"%Y%m%d:%H%M%S"`.log
-DRYOPT=""
-
-trap ctrl_c INT
-function ctrl_c() {
-        echo -e "\n** Ricevuto CTRL-C"
-#        sudo umount $MOUNTPOINT
-        exit 0
-}
-
-echo -n "Controllo che l'hard disk sia montato... "
-if ! lsblk -o UUID | grep --silent $HDUUID
-then
-	echo -e "Fail\nHard disk non montato: per favore controlla e riparti"
-	exit
-fi
-echo "Ok"
-
-# Calcolo il mountpoint dell'HD
-mountpoint=`lsblk -o UUID,MOUNTPOINT | grep $HDUUID | cut -f2- -d' '`
-
-#echo "Controllo l'integrità del filesystem di backup... "
-#if ! sudo e2fsck -f "$mountpoint"
-#then
-#	echo -e "\n*** Problemi al filesytem di backup: controlla e ripara!"
-#	exit
-#fi
-#echo "Ok"
-
-
-workdir=/media/Foto/Archivio
+. config.sh
+. functions.sh
+init
 
 if [ $# -lt 1 ]
   then
@@ -86,8 +51,9 @@ do
 	target="$backup"/Archivio/$dir
 	
 	# Regolarizzo i nomi sul master
-	exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
-	exiftool -q -q '-filename<%f-${model;}.%e' .
+	#exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
+	#exiftool -q -q '-filename<%f-${model;}.%e' .
+	fix_filename
 	
 	if [ -d "$target" ]
 	then 
@@ -98,14 +64,15 @@ do
 		( 
 			cd "$target"
 			# Regolarizzo i nomi sul backup (-q -q serve a eliminare warning)
-			exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
-			exiftool -q -q '-filename<%f-${model;}.%e' .
+			#exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
+			#exiftool -q -q '-filename<%f-${model;}.%e' .
+			fix_filename
 		)
 	fi
-	
 	rsync -auv . "$target"
-
 done
+
+close
 
 #rsync -auv $DRYOPT /Foto/ArchivioFoto/ --exclude-from=excludeFile.txt "$backup" |
 #  tee /Foto/ArchivioFoto/$RSYNCLOG
