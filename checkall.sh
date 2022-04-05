@@ -1,10 +1,7 @@
 #!/bin/bash
 set -e
 
-#archivio=Archivio
-backup=/media/Backup/ArchivioFoto_backup/Archivio/
-workdir=/media/Foto/Archivio
-
+. config.sh
 . functions.sh
 
 cd $workdir
