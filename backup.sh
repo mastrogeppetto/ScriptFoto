@@ -5,6 +5,14 @@
 . functions.sh
 init
 
+list=""
+for d in $dirs
+do
+	if ! [ -d "$backup"/"$d" ]
+	then list="$list $d"
+	fi
+done
+
 if [ $# -lt 1 ]
   then
     echo "Serve almeno un parametro, il nome della directory (es. '${0##*/} 20210604-PicnicMaranza')"
@@ -18,23 +26,11 @@ do
 	if [ ! -d $workdir/$dir  ]
 	then
 		echo "Non esiste la directory $workdir/$dir"
-		exit 1
+		continue
 	fi
-	
-	data=`echo $dir | cut -f1 -d-`
-	titolo=`echo $dir | cut -f2 -d-`
-	
-	if (( ${#data} != 8 )) #formato data scorretto
-	then 
-		echo -e "\n### Fail\nIl nome della directory non è valido"
-		echo "Il formato deve essere <data>-<titolo> (data = yyyymmdd)"
-		exit
-	fi
-	if [ -z $titolo ] #formato titolo scorretto
-	then 
-		echo -e "\n### Fail\nIl nome della directory non è valido"
-		echo "Il formato deve essere <data>_<titolo> (data = yyyymmdd)"
-		exit
+	if ! checkdirname "$dir"
+	then
+		continue
 	fi
 	
 	echo
@@ -50,9 +46,6 @@ do
 	backup="$mountpoint/ArchivioFoto_backup"
 	target="$backup"/Archivio/$dir
 	
-	# Regolarizzo i nomi sul master
-	#exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
-	#exiftool -q -q '-filename<%f-${model;}.%e' .
 	fix_filename
 	
 	if [ -d "$target" ]
@@ -63,9 +56,6 @@ do
 		read
 		( 
 			cd "$target"
-			# Regolarizzo i nomi sul backup (-q -q serve a eliminare warning)
-			#exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
-			#exiftool -q -q '-filename<%f-${model;}.%e' .
 			fix_filename
 		)
 	fi

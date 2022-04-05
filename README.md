@@ -1,4 +1,4 @@
-Per fare un backup si useno i comandi checkall.sh e backup-single.sh. Funzonano da qualunque directory, per esempio dalla home.
+Per fare un backup si usano i comandi checkall.sh e backup.sh. Funzionano da qualunque directory, per esempio dalla home.
 
 Con la chackall si ottiene l'elenco di tutti le directory di cui fare backup. La lista è simile a questa:
 
@@ -19,3 +19,19 @@ $ cat | cut -f2 -d/ | tr "\n" " "
 Si ottiene l'elenco delle directory, a cui si può applicare backup-single.sh:
 
 backup-single.sh 20210800-varie 20210802-SuturaIsa 20210803-RichiamoVaccES 20210806-Terlago 20210811-Chieti 20210816-Puglia 20210900-varie 20210906-Vittoriale 20210909-CapelliSabri_pre-post 20210910-EuropeiCiclismo 20210914-CapelliIsaBlu 20211000-varie 20211002-CompleannoCris 20211010-FestaZucaPergine 20211017-CastelloPergine 20211022-Autolavaggio 20211030-Praga 20211100-varie 20211111-AmiciBina 20211113-EmanulelTN 20211113-PinoTerlago
+
+REFERENCE
+
+backup.sh
+^^^^^^^^^
+Prende come parametri un numero di directory nell'archivio di lavoro e ne fa il backup.
+
+renamedir.sh
+^^^^^^^^^^^^
+Rinomina una directory, mantenendo consistente il backup. ATTENZIONE: non funziona se le due directory non sono già consistenti.
+
+checkall.sh
+^^^^^^^^^^^
+Esegue una serie di controlli. Opzionalmente, può ricalcolare gli md5 nella directory di lavoro e sul backup.
+
+Da fare: backup deve calcolare le directory di cui fare backup.
