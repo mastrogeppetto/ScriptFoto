@@ -1,9 +1,23 @@
 #!/bin/bash
+#Il parametro se presente determina quanti step verranno eseguiti 
+
+function stepExit () {
+  if [ "$PASSI" -eq "1" ]
+  then
+    close
+    exit
+  else
+    PASSI=$((PASSI-1))
+  fi
+}
+
 set -e
 
 . config.sh
 . functions.sh
 init
+
+PASSI=$1
 
 cd $workdir
 dirs=`find . -maxdepth 1 -mindepth 1 -type d ! -name Orfani | sort`
@@ -23,6 +37,8 @@ do
 done
 echo "Fine verifica directory (passo 1): $n problemi"
 
+stepExit
+  
 # Verifico che le directory nel backup siano presenti anche
 # nell'archivio di lavoro: vengono visualizzate le directory che 
 # non sono presenti.
@@ -40,6 +56,8 @@ do
 done
 echo "Fine verifica directory (Passo 2): $n problemi" 
 
+stepExit
+  
 # Verifico che il nome della directory segua lo schema richiesto
 # E' sufficiente allineare il nome della directory dell'archivio e
 # del backup allo standard (attenzione a dare lo stesso nome, pena
@@ -54,6 +72,8 @@ do
 	fi
 done
 echo -e "Fine verifica nome directory: $n problemi"
+
+stepExit
 
 echo
 read -r -p "# Ricalcolo gli md5 dei file? " input
@@ -76,7 +96,8 @@ case $input in
 	;;
 esac
 
-
+stepExit
+  
 echo -e "\n# Passo 4a: presenza file duplicati (master)"
 echo "Queste directory contengono file duplicati:"
 n=0
@@ -95,6 +116,8 @@ do
 	fi
 done
 
+stepExit
+
 echo -e "\n# Passo 4b: presenza file duplicati (backup)"
 echo "Queste directory contengono file duplicati:"
 n=0
@@ -112,6 +135,8 @@ do
 		echo "[dup-backup] $d ($dup)"
 	fi
 done
+
+stepExit
 
 echo -e "\n# Passo 5a: Verifica sincronizzazione backup -> master"
 echo "Queste directory di backup contengono file che non sono sul master"
@@ -137,7 +162,8 @@ do
 done
 echo "Fine verifica sincronizzazione (passo 5a): $n problemi"
 
-
+stepExit
+  
 echo -e "\n###\nIMPORTANTE: eventuali problemi rilevati dopo il test precedente"
 echo "possono essere recuperati rimuovendo il backup e eseguendo..."
 
@@ -162,6 +188,8 @@ do
 done
 echo "Fine verifica sincronizzazione (passo 5b): $n problemi"
 
+stepExit
+
 # Calcola l'md5 per tutti gli archivi e verifica che quello del master
 # e quello del backup contengano gli stessi digest. Per queste directory
 # va controllato il contenuto.
@@ -183,6 +211,8 @@ do
 done
 echo "Fine verifica sincronizzazione (passo 6): $n problemi"
 
+stepExit
+  
 # Calcola l'md5 per tutti gli archivi e verifica che quello del master
 # e quello del backup siano identici. Per queste directory andrebbe
 # eseguito l'md5check per capire esattamente qualisiano le differenze
