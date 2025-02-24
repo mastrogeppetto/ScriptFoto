@@ -13,8 +13,10 @@ function stepExit () {
 
 set -e
 
-. config.sh
-. functions.sh
+srcdir=$(dirname $0)
+
+. $srcdir/config.sh
+. $srcdir/functions.sh
 init
 
 PASSI=$1
