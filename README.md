@@ -2,7 +2,8 @@
 
 La directory Archivio contiene l'archivio delle foto di famiglia: i video andrebbero rimossi
 La directory Archivio contiene sottodirectory corrispondenti ad eventi per cui sono state scattate delle foto.
-Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data in cui è stata scattata la foto, il secondo è un titolo descrittivo
+Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data in cui è stata scattata la foto, il secondo è un titolo descrittivo.
+Nel titolo non va inserito il -, che è riservato a separatore tra data e titolo.
 
 ### PROCEDURA DI BACKUP della direcotry Archivio
 
