@@ -53,33 +53,36 @@ function full_md5() {
 }
 
 function init() {
-	if [ -z $workdir_mnt ]
+	if [ -z "$workdir_mnt" ]
 	then
 		echo "Non configurata la variabile con il filesystem di lavoro"
 		exit 1
 	fi
-	if mountpoint -q $workdir_mnt
+        echo "Il filesystem di lavoro è $workdir_mnt"
+	if mountpoint -q "$workdir_mnt"
 	then
 		echo "Il filesystem di lavoro è già montato"
 	else
 		echo "Monto il filesystem di lavoro"
-		if ! sudo mount $workdir_mnt
+		if ! sudo mount "$workdir_mnt"
 		then
 			echo "Non riesco ad installare il filesystem di lavoro"
 			exit 1
 		fi
-	fi		
-	if [ -z $backup_mnt ]
+	fi
+	
+        if [ -z "$backup_mnt" ]
 	then
 		echo "Non configurata la variabile con il filesystem di backup"
 		exit 1
-	fi
-	if mountpoint -q $backup_mnt
+	fi    
+        echo "Il filesystem di backup è $backup_mnt"
+	if mountpoint -q "$backup_mnt"
 	then
 		echo "Il filesystem di backup è già montato"
 	else
 		echo "Monto il filesystem di backup"
-		if ! sudo mount $backup_mnt
+		if ! sudo mount "$backup_mnt"
 		then
 			echo "Non riesco ad installare il filesystem di backup"
 			exit 1
