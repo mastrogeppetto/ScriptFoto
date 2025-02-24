@@ -1,16 +1,35 @@
+### ORGANIZZAZIONE DELLA DIRECTORY DELLE FOTO
+
+La directory Archivio contiene l'archivio delle foto di famiglia: i video andrebbero rimossi
+La directory Archivio contiene sottodirectory corrispondenti ad eventi per cui sono state scattate delle foto.
+Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data in cui è stata scattata la foto, il secondo è un titolo descrittivo
+
+### PROCEDURA DI BACKUP della direcotry Archivio
+
 Per fare un backup si usano i comandi checkall.sh e backup.sh. Funzionano da qualunque directory, per esempio dalla home.
 
-Con la chackall si ottiene l'elenco di tutti le directory di cui fare backup. La lista è simile a questa:
+Con la checkall verifica lo stato della directory Archivio. Al comando può essere passato come parametro
+che indica Il numero di passi eseguiti. Ogni passo esegue un check diverso:
+1. Sottodirectory di Archivio che non sono presenti sul backup
+2. Sottodirectory del backup di Archivio che non sono presenti in Archivio
+3. Verifica che i nomi delle directory in Archivio abbiano nomi ben formati (yyyymmdd-titolo)
+4. Opzionale: calcolo degli md5 dei file in Archivio. Il calcolo viene eseguito solo per le directory che non hanno un file md5 
+5. Verifica della presenza di file duplicati nella directory Archivio
+6. Verifica della presenza di file duplicati nella directory di backup di Archivio
+7. Verifica file presenti solo nel backup della directory Archivio
+8. Verifica file presenti solo nella directory Archivio
 
-[no-backup] ./20211123-MercatiniTrento
-[no-backup] ./20211127-5Terre
-[no-backup] ./20211200-Avvento_S.Lucia
-[no-backup] ./20211212-BallettiRussi
-[no-backup] ./20211215-Booster_varieCapelli
-[no-backup] ./20211216-TormentoneFiorentino
-[no-backup] ./20211219-Polsa
-[no-backup] ./20211221-SabriVR
-[no-backup] ./20211224-NataleTrento
+Nell'uso più semplice, si usa il valore 1 pre il parametro e si ottiene l'elenco di tutti le directory di cui fare backup. La lista è simile a questa:
+
+    [no-backup] ./20211123-MercatiniTrento
+    [no-backup] ./20211127-5Terre
+    [no-backup] ./20211200-Avvento_S.Lucia
+    [no-backup] ./20211212-BallettiRussi
+    [no-backup] ./20211215-Booster_varieCapelli
+    [no-backup] ./20211216-TormentoneFiorentino
+    [no-backup] ./20211219-Polsa
+    [no-backup] ./20211221-SabriVR
+    [no-backup] ./20211224-NataleTrento
 
 Si copia la lista e la si passa in un comando di questo genere:
 
