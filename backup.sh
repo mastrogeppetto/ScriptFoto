@@ -1,8 +1,12 @@
 #!/bin/bash
 # Programma per il backup - ottobre 2018 - riveduto gennaio 2021
+set -e
 
-. config.sh
-. functions.sh
+srcdir=$(dirname $0)
+
+. $srcdir/config.sh
+. $srcdir/functions.sh
+
 init
 
 list=""

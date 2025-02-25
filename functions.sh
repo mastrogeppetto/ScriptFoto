@@ -7,6 +7,19 @@ function echocol {
 	tput sgr0
 }
 
+# Al momento non viene utilizzato, da testare
+function flattendir {
+	# Step 1: Controlla nomi duplicati e in caso termina con errore
+	if find "$1" -mindepth 2 -type f -printf "%f\n" | sort | uniq -d | grep .; then
+		echo "Questi file sono presenti in più directories. Operazione interrotta, directory intatta"
+    		exit 1
+	fi
+	# Step 2: Spostamento dei file nella directory principale
+	find "$1" -mindepth 2 -type f -exec mv {} "$1"/ \;
+	# Step 3: Rimozioni delle directory vuote
+	find "$1" -mindepth 1 -type d -empty -delete
+}
+
 function checkdirname {
 	function fail  {
 		echo -e "\n### $1 non è un nome valido"
