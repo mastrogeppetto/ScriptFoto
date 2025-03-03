@@ -7,6 +7,11 @@ function echocol {
 	tput sgr0
 }
 
+function checkSubdirectory {
+# Verifica se ci sono sottocartelle da gestire
+	ls $1/*/ >/dev/null 2>&1
+}
+
 # Al momento non viene utilizzato, da testare
 function flattendir {
 	# Step 1: Controlla nomi duplicati e in caso termina con errore
