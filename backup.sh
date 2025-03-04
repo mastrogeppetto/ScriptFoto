@@ -68,6 +68,7 @@ do
 	read
 	# Costruzione del nome della directory di backup
 	backup="$backup_mnt/ArchivioFoto_backup"
+	diffdir="$backup_mnt/ArchivioFoto_diff/Archivio/$dir_$(date +%Y%m%d-%H%M%S)"
 	target="$backup"/Archivio/$dir
 	# Normalizzazione dei nomi di file
 	fix_filename
@@ -87,7 +88,7 @@ do
 		)
 	fi
         # Comando di backup
-	rsync -auv $dryrun . "$target"
+	rsync -av $dryrun --update --delete --info=stats2 --backup-dir=$diffdir . "$target"
 done
 
 close
