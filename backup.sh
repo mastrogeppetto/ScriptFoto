@@ -55,12 +55,6 @@ do
 	echo
 	echo Data: "$data"
 	echo Titolo: "$titolo"
-	# Verifica che la directory sia piatta
-	if checkSubdirectory "$workdir/$dir"
-	then
-		echo "Ci sono sotto-cartelle, non procedo"
-#		continue
-	fi
 	# Entra nella directory di cui fare backup e chiede conferma
 	cd $workdir/$dir
 	echo -e "\nProcedo? (a capo per continuare CTRL-C per interrompere)"
@@ -74,6 +68,13 @@ do
         echo "Normalizzo i nomi dei file (anche nelle sottodirectory)"
 	export -f fix_filename
 	find . -type d -exec bash -c 'fix_filename "{}"' \;
+	# Verifica che la directory sia piatta
+	if checkSubdirectory "$workdir/$dir"
+	then
+		echo "Ci sono sotto-cartelle, non procedo"
+#		continue
+		flattendir "$workdir/$dir"
+	fi
 	# Controlla se la directory di backup esiste, ma offre la possibilità
         # di continuare
         # (prima verranno normalizzati i nomi nella directory di backup)
