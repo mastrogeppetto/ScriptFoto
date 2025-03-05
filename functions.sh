@@ -59,6 +59,9 @@ function fast_md5() {
 
 function fix_filename() {
 # Regolarizza i nomi dei file backup (-q -q serve a eliminare warning)
+# Prende come parametro la directory da modificare
+#  Deve essere chiamato in una shell dedicata perchè non rientra
+	cd $1
 	exiftool -q -q -d %Y%m%d-%H%M%S%%-c.%%le "-filename<DateTimeOriginal" .
 	exiftool -q -q '-filename<%f-${model;}.%e' .
 }

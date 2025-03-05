@@ -59,7 +59,7 @@ do
 	if checkSubdirectory "$workdir/$dir"
 	then
 		echo "Ci sono sotto-cartelle, non procedo"
-		continue
+#		continue
 	fi
 	# Entra nella directory di cui fare backup e chiede conferma
 	cd $workdir/$dir
@@ -71,7 +71,9 @@ do
 	diffdir="$backup_mnt/ArchivioFoto_diff/Archivio/$dir_$(date +%Y%m%d-%H%M%S)"
 	target="$backup"/Archivio/$dir
 	# Normalizzazione dei nomi di file
-	fix_filename
+        echo "Normalizzo i nomi dei file (anche nelle sottodirectory)"
+	export -f fix_filename
+	find . -type d -exec bash -c 'fix_filename "{}"' \;
 	# Controlla se la directory di backup esiste, ma offre la possibilità
         # di continuare
         # (prima verranno normalizzati i nomi nella directory di backup)
@@ -82,10 +84,10 @@ do
 		echo -e "\nPremi un tasto per proseguire"
 		read
                 # Normalizza i nomi nella directory di backup
-		( 
-			cd "$target"
-			fix_filename
-		)
+#		( 
+#			cd "$target"
+#			fix_filename
+#		)
 	fi
         # Comando di backup
 	rsync -av $dryrun --update --delete --info=stats2 --backup-dir=$diffdir . "$target"
