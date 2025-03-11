@@ -2,6 +2,12 @@
 # Programma per il backup - ottobre 2018 - riveduto gennaio 2021
 set -e
 
+if ! command -v tree 2>&1 >/dev/null
+then
+    echo "E' necessario installare il comando tree con \"sudo apt install tree\""
+    exit 1
+fi
+
 srcdir=$(dirname $0)
 
 . $srcdir/config.sh
@@ -71,9 +77,13 @@ do
 	# Verifica che la directory sia piatta
 	if checkSubdirectory "$workdir/$dir"
 	then
-		echo "Ci sono sotto-cartelle, non procedo"
-#		continue
-		flattendir "$workdir/$dir"
+		echo "Ci sono sotto-cartelle con questa struttura:"
+		tree -d "$workdir/$dir"
+		read -r -p "Vuoi che appiattisca le cartelle? [y/N] " response
+		if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
+		then
+        		flattendir "$workdir/$dir"
+        	fi
 	fi
 	# Controlla se la directory di backup esiste, ma offre la possibilità
         # di continuare
