@@ -1,7 +1,11 @@
 #!/bin/bash
 
-. config.sh
-. functions.sh
+set -e
+
+srcdir=$(dirname $0)
+
+. $srcdir/config.sh
+. $srcdir/functions.sh
 init
 
 function dateScatti {
@@ -26,23 +30,25 @@ do
 	fi
 	if ! [ -d "$dir" ]
 	then 
-		echocol 2 "$dir  non trovato nell'archivio di lavoro!"
+		echocol 1 "$dir non trovato nell'archivio di lavoro!"
+		echocol 1 "  Non trattato"
 		continue
 	fi
 	if ! [ -d "$backup/$dir" ]
 	then 
-		echocol 1 "$dir  non trovato nel backup!"
-		continue
-	fi
-	if ! diff --recursive "$dir" "$backup/$dir"
-	then
-		echocol 1 "Le directory di lavoro e di backup sono diverse"
-		echo "E' possibile rinominarle solo se sono uguali"
-		continue
+		echocol 2 "$dir non trovato nel backup!"
+#		continue
 	else
-		echo "Le directory di lavoro e di backup sono uguali"
+		if ! diff --recursive "$dir" "$backup/$dir"
+		then
+			echocol 2 "Le directory di lavoro e di backup sono diverse"
+			echocol 2 "E' possibile rinominarle solo se sono uguali"
+			continue
+		else
+			echo "Le directory di lavoro e di backup sono uguali"
+		fi
 	fi
-	echo "Date degli scatti:"
+	echo "Calcolo le date degli scatti: attendi..."
 	dateScatti "$dir"
 	while true
 	do
@@ -52,13 +58,12 @@ do
 		checkdirname "$nuovonome" && break
 		echo "Nome non conforme!"
 	done
-	echocol 2 "Rinomino le directory come \"$nuovonome\""
+	echocol 2 "Rinomino come \"$nuovonome\""
 	mv "$dir" "$nuovonome"
-	mv "$backup/$dir" "$backup/$nuovonome"
-
-	echocol 2 "Normalizzo i nomi delle foto"
-	( cd "$archivio/$nuovonome"; fix_filename )
-	( cd "$backup/$nuovonome"; fix_filename )
+# Solo nel caso in cui esista anche il backup
+	if [ -d "$backup/$dir" ]; then
+  		mv "$backup/$dir" "$backup/$nuovonome"
+	fi
 done
 
 close

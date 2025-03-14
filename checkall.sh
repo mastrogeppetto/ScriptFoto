@@ -19,17 +19,35 @@ srcdir=$(dirname $0)
 . $srcdir/functions.sh
 init
 
-PASSI=$1
-
+# Usa un valore di default se il numero di passi non è specificato
+PASSI=${1:-3}
 cd $workdir
 dirs=`find . -maxdepth 1 -mindepth 1 -type d ! -name Orfani | sort`
 
 IFS=$'\n'
+
+# Verifico che il nome della directory segua lo schema richiesto
+# E' sufficiente allineare il nome della directory dell'archivio e
+# del backup allo standard (attenzione a dare lo stesso nome, pena
+# duplicazione)
+echo -e "\n# Passo 1: verifica del nome della directory."
+echo "Queste directory hanno nome irregolare:"
+n=0
+for d in $dirs
+do
+        if ! checkdirname "$d" > /dev/null
+        then echo "[bad-name]" \"$d\"; let n=n+1;
+        fi
+done
+echo -e "Fine verifica nome directory: $n problemi"
+
+stepExit
+
 # Verifico che le directory nell'archivio siano anche presenti
 # nel backup: Vengono visualizzate le directory che non sono presenti.
 # Probabilmente è necessario eseguire il backup.
-echo -e "\n# Passo 1: verifica sui filename."
-echo "Queste directory master non sono hanno backup:"
+echo -e "\n# Passo 2: verifica sui filename."
+echo "Queste directory master non hanno backup:"
 n=0
 for d in $dirs
 do
@@ -46,7 +64,7 @@ stepExit
 # non sono presenti.
 # Probabilmente la directory originaria è stata modificata e le
 # stesse foto sono altrove
-echo -e "\n# Passo 2: verifica sui filename."
+echo -e "\n# Passo 3: verifica sui filename."
 echo "Queste directory sul backup non hanno master:"
 n=0
 for d in $dirs
@@ -57,23 +75,6 @@ do
 	fi
 done
 echo "Fine verifica directory (Passo 2): $n problemi" 
-
-stepExit
-  
-# Verifico che il nome della directory segua lo schema richiesto
-# E' sufficiente allineare il nome della directory dell'archivio e
-# del backup allo standard (attenzione a dare lo stesso nome, pena
-# duplicazione)
-echo -e "\n# Passo 3: verifica del nome della directory."
-echo "Queste directory hanno nome irregolare:"
-n=0
-for d in $dirs
-do
-	if ! checkdirname "$d" > /dev/null
-	then echo "[bad-name]" \"$d\"; let n=n+1;
-	fi
-done
-echo -e "Fine verifica nome directory: $n problemi"
 
 stepExit
 
