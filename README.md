@@ -1,26 +1,43 @@
 ### ORGANIZZAZIONE DELLA DIRECTORY DELLE FOTO
 
 La directory Archivio contiene l'archivio delle foto di famiglia: i video andrebbero rimossi
+
 La directory Archivio contiene sottodirectory corrispondenti ad eventi per cui sono state scattate delle foto.
-Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data in cui è stata scattata la foto, il secondo è un titolo descrittivo.
+
+Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data associata all'evento, il secondo è un titolo descrittivo.
 Nel titolo non va inserito il -, che è riservato a separatore tra data e titolo.
 
 ### PROCEDURA DI BACKUP della direcotry Archivio
 
-Per fare un backup si usano i comandi checkall.sh e backup.sh. Funzionano da qualunque directory, per esempio dalla home.
+Per gestire un backup si usano i comandi checkall.sh, renamedir.sh e backup.sh. Funzionano da qualunque directory, per esempio dalla home.
 
-Con la checkall verifica lo stato della directory Archivio. Al comando può essere passato come parametro
-che indica Il numero di passi eseguiti. Ogni passo esegue un check diverso:
-1. Sottodirectory di Archivio che non sono presenti sul backup
-2. Sottodirectory del backup di Archivio che non sono presenti in Archivio
-3. Verifica che i nomi delle directory in Archivio abbiano nomi ben formati (yyyymmdd-titolo)
+## backup.sh
+
+Con il comando backup.sh si aggiorna il backup di una o più directory. Con l'opzione -n non viene aggiornato il backup, ma vengono effettuate le altre operazioni.
+
+Dopo aver controllato che la directory esista ed abbia un nome lecito il comando si arresta e chiede conferma.
+
+Poi vengono normalizzati i nomi dei file contenuti nella directory e nelle eventuali sottodirectory. Il formato finale è giorno-data-dispositivo.estensione.
+
+
+
+## checkall.sh
+
+Con il comando checkall.sh si verifica lo stato della directory Archivio e del backup. 
+
+Al comando può essere passato come parametro che indica il numero di passi eseguiti. Il numero di passi di default è 3.
+
+Ogni passo esegue un check diverso:
+1. (DEFAULT) Verifica che i nomi delle directory in Archivio abbiano nomi ben formati (yyyymmdd-titolo), o da ridenominare con renamedir.sh
+2. (DEFAULT) Sottodirectory di Archivio che non sono presenti sul backup
+3. (dEFAULT) Sottodirectory del backup di Archivio che non sono presenti in Archivio
 4. Opzionale: calcolo degli md5 dei file in Archivio. Il calcolo viene eseguito solo per le directory che non hanno un file md5 
 5. Verifica della presenza di file duplicati nella directory Archivio
 6. Verifica della presenza di file duplicati nella directory di backup di Archivio
 7. Verifica file presenti solo nel backup della directory Archivio
 8. Verifica file presenti solo nella directory Archivio
 
-Nell'uso più semplice, si usa il valore 1 pre il parametro e si ottiene l'elenco di tutti le directory di cui fare backup. La lista è simile a questa:
+Nell'uso più semplice, si usa senza parametro e si ottiene l'elenco di tutti le directory da ridenominare e quelle di cui fare backup. La lista è simile a questa:
 
     [no-backup] ./20211123-MercatiniTrento
     [no-backup] ./20211127-5Terre
