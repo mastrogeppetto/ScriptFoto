@@ -62,13 +62,13 @@ do
 	echo Data: "$data"
 	echo Titolo: "$titolo"
 	# Entra nella directory di cui fare backup e chiede conferma
-	cd $workdir/$dir
+	cd "$workdir"/"$dir"
 	echo -e "\nProcedo? (a capo per continuare CTRL-C per interrompere)"
 	echo -n ">"
 	read
 	# Costruzione del nome della directory di backup
-	backup="$backup_mnt/ArchivioFoto_backup"
-	diffdir="$backup_mnt/ArchivioFoto_diff/Archivio/$dir_$(date +%Y%m%d-%H%M%S)"
+	backup="$backup_mnt"/ArchivioFoto_backup
+	diffdir="$backup_mnt"/ArchivioFoto_diff/Archivio/"$dir"_"$(date +%Y%m%d-%H%M%S)"
 	target="$backup"/Archivio/$dir
 	# Normalizzazione dei nomi di file
         echo "Normalizzo i nomi dei file (anche nelle sottodirectory)"
