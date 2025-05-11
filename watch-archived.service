@@ -1,0 +1,12 @@
+[Unit]
+Description=Watch /media/Foto for moved files and fix group
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/watch_archived.sh
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
