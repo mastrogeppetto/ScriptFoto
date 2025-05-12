@@ -1,5 +1,5 @@
 [Unit]
-Description=Watch /media/Foto for moved files and fix group
+Description=Watch /media/Foto/Archivio for moved files and fix group
 After=network.target
 
 [Service]
