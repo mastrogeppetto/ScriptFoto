@@ -15,12 +15,6 @@
 #!/bin/bash
 set -e
 
-ARCHIVIO="/media/Foto/Archivio"
-BACKUP="/media/Backup/ArchivioFoto/Archivio"
-DIRREGEX="^([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-[^ -]+$"
-IMGREGEX="^([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-([0-2][0-9][0-5][0-9][0-5][0-9])-(.+)$"
-WAREGEX="^(.*)IMG-([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-WA(.+)$"
-
 function dateScatti {
   if ! [ -d "$1" ]; then 
     echo "Archivio $1 non trovato"
@@ -128,4 +122,4 @@ echo -e "\nProcedo con il dry-run? (a capo per continuare CTRL-C per interromper
 echo -n ">"
 read
 	
-#./newbackup.sh -n
+backup.sh -n

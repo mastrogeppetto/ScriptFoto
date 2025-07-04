@@ -2,15 +2,6 @@
 # Programma per il backup - nuova versione 2025
 set -e
 
-# Mountpoint del filesystem dei backup
-BACKUP_MNT=/media/Backup
-# Directory di backup
-BACKUP_DIR=$BACKUP_MNT/ArchivioFoto
-# Muontpoint del filesystem delle foto
-ARCHIVIO_MNT=/media/Foto
-# Directory con l'archivio delle foto
-ARCHIVIO_DIR=$ARCHIVIO_MNT
-
 # Gestione delle opzioni
 dryrun=""
 while getopts "nb:" opt; do

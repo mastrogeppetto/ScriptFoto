@@ -1,0 +1,27 @@
+# Per operare con i gli script eseguire
+# . ./setFotoEnv
+
+export PS1="[FOTO] $PS1"
+export PATH=$PATH:/home/augusto/ScriptFoto
+
+# Mountpoint del filesystem dei backup
+export BACKUP_MNT=/media/Backup
+# Directory di backup
+export BACKUP_DIR=$BACKUP_MNT/ArchivioFoto
+# Muontpoint del filesystem delle foto
+export ARCHIVIO_MNT=/media/Foto
+# Directory con tutte le foto
+export ARCHIVIO_DIR=$ARCHIVIO_MNT
+# Directory con gli archivi delle foto per evento
+export ARCHIVIO="/media/Foto/Archivio"
+# Directory con il backup degli archivi delle foto per evento
+export BACKUP="/media/Backup/ArchivioFoto/Archivio"
+# Formato del nome degli archivi
+export DIRREGEX="^([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-[^ -]+$"
+# Formato del nome delle foto
+export IMGREGEX="^([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-([0-2][0-9][0-5][0-9][0-5][0-9])-(.+)+$"
+# Formato nativo dei filename delle immagini whatsapp
+export WAREGEX="^(.*)IMG-([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-WA(.+)$"
+# Nomi di file da ignorare
+export NOCHECK="^(Video|md5.lst|Picasa.ini)$"
+

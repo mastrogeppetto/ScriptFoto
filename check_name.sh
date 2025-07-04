@@ -11,11 +11,6 @@ set -e
 # Nel secondo segue il nome della directory che contiene il file e poi il nome del file, separati
 # da tabulazione
 
-ARCHIVIO="/media/Foto/Archivio"
-DIRREGEX="^([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-[^ -]+$"
-IMGREGEX="^([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-([0-2][0-9][0-5][0-9][0-5][0-9])-(.+)+$"
-NOCHECK="^(Video|md5.lst|Picasa.ini)$"
-
 fast=''
 
 TEMP_FILE=$(mktemp)
@@ -24,7 +19,7 @@ if [[ $? -ne 0 ]]; then
     echo "Error: Failed to create a temporary file." >&2
     exit 1
 fi
-echo $TEMP_FILE
+#echo $TEMP_FILE
 if [ ! -d "$ARCHIVIO" ]; then
   echo "Error: Directory '$ARCHIVIO' not found."
   exit 1
@@ -57,6 +52,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
       fi
     fi
 done < "$TEMP_FILE"
+
+rm "$TEMP_FILE"
 
 
 
