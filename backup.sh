@@ -1,20 +1,17 @@
 #!/bin/bash
-# Programma per il backup - ottobre 2018 - riveduto gennaio 2021
+# Programma per il backup - nuova versione 2025
 set -e
 
-if ! command -v tree 2>&1 >/dev/null
-then
-    echo "E' necessario installare il comando tree con \"sudo apt install tree\""
-    exit 1
-fi
+# Mountpoint del filesystem dei backup
+BACKUP_MNT=/media/Backup
+# Directory di backup
+BACKUP_DIR=$BACKUP_MNT/ArchivioFoto
+# Muontpoint del filesystem delle foto
+ARCHIVIO_MNT=/media/Foto
+# Directory con l'archivio delle foto
+ARCHIVIO_DIR=$ARCHIVIO_MNT
 
-srcdir=$(dirname $0)
-
-. $srcdir/config.sh
-. $srcdir/functions.sh
-
-init
-
+# Gestione delle opzioni
 dryrun=""
 while getopts "nb:" opt; do
   case $opt in
@@ -31,26 +28,47 @@ while getopts "nb:" opt; do
       ;;
   esac
 done
-shift $((OPTIND-1))
 
-# Si arresta se non ci sono parametri
-if [ $# -lt 1 ]
-  then
-    echo "Serve almeno un parametro, il nome della directory (es. '${0##*/} 20210604-PicnicMaranza')"
-    exit 1
+# Controllo esistenza directory
+if [ ! -d "$BACKUP_DIR"  ]
+then
+  echo "Non esiste la directory delle foto $BACKUP_DIR"
+  exit 1
+else
+  echo "Il backup è in $BACKUP_DIR"
 fi
 
-echo $@
+if [ ! -d "$ARCHIVIO_DIR"  ]
+then
+  echo "Non esiste la directory delle foto $ARCHIVIO_DIR"
+  exit 1
+else
+  echo "Le foto sono nella directory $ARCHIVIO_DIR"
+fi
 
-# Loop su tutte le directory passate come parametro
-for dir in "$@"
-do
-	# Controllo esistenza directory
-	if [ ! -d "$workdir/$dir"  ]
-	then
-		echo "Non esiste la directory $workdir/$dir"
-		continue
-	fi
+if [[ $dryrun ]]
+then
+  echo "Ti ricordo che hai richiesto un dry run, nessun file verrà alterato"
+fi
+
+echo -e "\nProcedo? (a capo per continuare CTRL-C per interrompere)"
+echo -n ">"
+read
+
+#echo -n "Conteggio delle difformità (attendi pazientemente): "
+#./checkname.sh | wc -l
+
+diffdir="$BACKUP_MNT"/ArchivioFoto_diff/"$(date +%Y%m%d-%H%M%S)"
+rsync -av $dryrun \
+  --update \
+  --delete \
+  --info=stats2 \
+  --backup-dir="$diffdir" \
+  --include='Archivio/***' \
+  --exclude='*' \
+  "$ARCHIVIO_DIR"/ "$BACKUP_DIR"/
+
+exit 1
 	# Verifica che il nome della directory sia lecito (yyyymmdd-titolo)
         # altrimenti passa al successivo
 	if ! checkdirname "$dir"

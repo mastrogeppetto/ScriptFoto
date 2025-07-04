@@ -1,3 +1,8 @@
+===================================================
+=== Questo documento è obsoleto                 ===
+=== Aggiornato su /media/Foto/2025-sistemazione ===
+===================================================
+
 ### ORGANIZZAZIONE DELLA DIRECTORY DELLE FOTO
 
 La directory Archivio contiene l'archivio delle foto di famiglia: i video andrebbero rimossi
