@@ -49,6 +49,7 @@ do
     echo "Archivio $dir non trovato"
     continue
   fi
+  echo "Elaboro l'archivio $dir"
 # Se il nome della directory di archivio è non conforme
   if ! [[ "$dir" =~ $DIRREGEX ]]; then
 # Fornisco le date degli scatti (utile suggerimento)
@@ -66,15 +67,15 @@ do
     done 
     mv -n $ARCHIVIO/$dir $ARCHIVIO/$nuovonome
     dir=$nuovonome # Aggiorno la variabile dir, uasata dopo
+    echo "Archivio ridenominato $dir"
   fi
   defaultdate=${BASH_REMATCH[1]}  # Salvo la data per usarla come default
-  echo $defaultdate
   # Entra nella directory di Archivio
   cd $dir
   # Rimuove i vecchi md5
-  if [ -f "md5.lst" ]; then rm -v "md5.lst"; fi
+  if [ -f "md5.lst" ]; then rm -vf "md5.lst"; fi
   # Rimuove configurazione Picasa
-  if [ -f "Picasa.ini" ]; then rm -v "md5.lst"; fi
+  if [ -f "Picasa.ini" ]; then rm -vf "Picasa.ini"; fi
   # rinomina le foto ricorsivamente
   find . -type f -print0 | sort | 
   while IFS= read -r -d '' img
@@ -90,12 +91,26 @@ do
 #    ma si tratta di un file whatsapp, lo rinomino a partire dal nome del file
           if [[ "$fn" =~ $WAREGEX ]]; then
             newname="$dn/${BASH_REMATCH[2]}-000000-WhatsApp_${BASH_REMATCH[3]}"
-            mv -n $img $newname
+            if diff -q "$img" "$newname"; then
+                echo "File omonimi uguali: sostituisco"
+                mv "$img" "$newname"
+            else
+                echo "File omonimi diversi: faccio un backup "              
+                mv --backup=numbered "$img" "$newname"
+            fi
           else
 #    altrimenti creo un filename conforme con la data dell'archivio e il nome del file stesso, con un
 #    ben riconoscibile nel filename (EXTRA)
             newname="$dn/$defaultdate-000000-EXTRA_$fn"
-            mv -n "$img" "$newname"
+            if [ -f "$newname" ]; then
+              if diff -q "$img" "$newname"; then
+                echo "File omonimi uguali: sostituisco"
+                mv "$img" "$newname"
+              else
+                echo "File omonimi diversi: faccio un backup "              
+                mv --backup=numbered "$img" "$newname"
+              fi
+            fi
           fi
 #     visualizzo l'operazione
           echo "$img -> $newname"
@@ -109,17 +124,23 @@ do
   cd $ARCHIVIO
 done    
 
-echo "Eseguo il controllo con le stessa directory sul backup"
+echo -e "===\nEseguo il controllo con le stessa directory sul backup"
 echo "Dovrebbero risultare solo file spurii, tipo md5.lst e Picasa.ini"
-
 for dir in "$@"; do
   echo "=== Controllo $dir ==="
   jdupes -ru "$BACKUP/$dir" "$ARCHIVIO/$dir"
 done
+echo "Verifica che il risultato sia quello atteso: se l'archivio non ha backup ci saranno tutte"
+echo "le nuove immagini solo nell'archivio di lavoro"
 
-echo "Ora preparo il backup: prima il dry-run, poi quello vero"
-echo -e "\nProcedo con il dry-run? (a capo per continuare CTRL-C per interrompere)"
+echo -e "===\nProcedo con il dry-run del backup (a capo per continuare CTRL-C per interrompere)"
 echo -n ">"
 read
-	
-backup.sh -n
+
+echo $SRCDIR
+$SRCDIR/backup.sh -ny
+
+echo -e "\nProcedo con backup? (a capo per continuare CTRL-C per interrompere)"
+echo -n ">"
+read
+$SRCDIR/backup.sh -y

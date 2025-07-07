@@ -1,16 +1,39 @@
-===================================================
-=== Questo documento è obsoleto                 ===
-=== Aggiornato su /media/Foto/2025-sistemazione ===
-===================================================
-
 ### ORGANIZZAZIONE DELLA DIRECTORY DELLE FOTO
 
-La directory Archivio contiene l'archivio delle foto di famiglia: i video andrebbero rimossi
+La directory Archivio contiene l'archivio delle foto di famiglia organizzate in sottodirectory corrispondenti ad eventi per cui sono state scattate delle foto.
 
-La directory Archivio contiene sottodirectory corrispondenti ad eventi per cui sono state scattate delle foto.
+Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data associata all'evento, il secondo è un titolo descrittivo. Nel titolo non va inserito il -, che è riservato a separatore tra data e titolo, e il carattere spazio, perché complica inutilmente la vita. Il titolo "varie" serve a collezionare foto relative ad un periodo, senza eventi definiti. Il sottocampo del numero del giorno può essere 00, ad indicare che le foto sono relative ad un mese, piuttosto che un giorno. Simile per il campo del mese.
 
-Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data associata all'evento, il secondo è un titolo descrittivo.
-Nel titolo non va inserito il -, che è riservato a separatore tra data e titolo.
+Il nome del file ha un formato definito: yyyymmdd-hhmmss-marca. Il primo campo è la data, la seconda l'ora di scatto, il terzo il tipo dell'apparecchio che ha scattato la foto. Nel caso di tratti di foto scaricate da whatsapp il campo della data viene estratto dal nome della foto, l'ora è sostituita da 000000, ma marca dalla string "WhatApp" se guita dalla parte finale del nome originale del file. I file che non sono foto vengono denominati inserendo la data presente nella directory archivio, la sequenza 000000 per l'ora, e la stringa "EXTRA" seguita dal nome originale del file.
+
+### Utilizzo degli script ###
+
+Per utilizzare gli script 
+* aprire un terminale
+* spostarsi in questa directory
+* digitare il comando `source ./setFotoEnv`
+ 
+Il prompt della riga di comando cambia, ad indicare che sono state definite le variabili d'ambiente che abilitano gli script.
+
+### Procedura di verifica della conformità dei nomi di directory e immagini
+
+Il comando `check_name` scandisce tutte le directory di archivio e restituisce un file contenente:
+* i nomi delle directory archivio con il nome non conforme, con prefisso [bad-dirname]
+* i nomi delle directory archivio contenenti nomi di file con conformi, con prefisso [bad-filenames] ogni riga contiene il nome della directory e il numero di file non conformi. Il comando impiega diversi minuti, e mette il risultato nello stdout
+
+### Procedura per la correzione dei filename delle foto
+
+Il comando `fix_name` prende in input il nome di uno o più archivi (solo il nome dell'archivio), e tratta tutti i file in essi contenuti discendendo ricorsivamente le sottodirectory, ignorando i link simbolici.
+
+Terminata la normalizzazione dei nomi di tutti gli archivi, il comando esegue, per ciascun archivio, una verifica che controlla che i nomi dei file nell'archivio della directory di lavoro siano gli stessi nell'archivio di backup. Posso essere indicati come mancanti i file md5.lst e Picasa.ini, perché vengono rimossi.
+
+Al termine del controllo il comando propone di fare un backup dell'archivio.
+
+### Procedura di backup
+
+Il backup viene eseguito dal comando `backup`. Accetta due opzioni:
+* `-n` esegue un dry-run, senza modificare nulla
+* `-y` silenzioso, adatto agli script
 
 ### PROCEDURA DI BACKUP della direcotry Archivio
 

@@ -1,9 +1,4 @@
 install:
-	chmod u+x *.sh
-	cp *.sh ~/bin/
-	sudo cp watch_archived.sh /usr/local/bin/
-	sudo cp watch-archived.service /etc/systemd/system
-	sudo systemctl daemon-reexec
-	sudo systemctl daemon-reload
-	sudo systemctl enable --now watch-archived.service
-	sudo systemctl status watch-archived.service
+	sudo cp 98-messaggio-per-gruppo-foto /etc/update-motd.d/
+	sudo chmod +x /etc/update-motd.d/98-messaggio-per-gruppo-foto
+	pandoc README.md -o README.pdf --pdf-engine=wkhtmltopdf

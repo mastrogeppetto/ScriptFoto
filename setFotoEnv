@@ -1,8 +1,17 @@
-# Per operare con i gli script eseguire
-# . ./setFotoEnv
+# Costruisce la directory in cui risiedono i comandi
+if [[ "$BASH_SOURCE" =~ "^/([^/\x00]+(?:/[^/\x00]+)*)?$|^/$" ]]; then
+  # Se il path con cui si è evocato "source" è un path assoluto
+  # allora quella è la directory
+  export SRCDIR=$(dirname $BASH_SOURCE)
+else
+  # altrimenti bisogna aggiungere la directory di lavoro
+  export SRCDIR=$(pwd)/$(dirname $BASH_SOURCE)
+fi
 
-export PS1="[FOTO] $PS1"
-export PATH=$PATH:/home/augusto/ScriptFoto
+if [[ ! "$PS1" == *"[FOTO]"* ]]; then
+#  export PS1="\e[33m[FOTO]\e[0m $PS1"
+  export PS1="[FOTO] $PS1"
+fi
 
 # Mountpoint del filesystem dei backup
 export BACKUP_MNT=/media/Backup
@@ -25,3 +34,23 @@ export WAREGEX="^(.*)IMG-([1-2][0-9][0-9][0-9][0-1][0-9][0-3][0-9])-WA(.+)$"
 # Nomi di file da ignorare
 export NOCHECK="^(Video|md5.lst|Picasa.ini)$"
 
+# definizione dei comandi come alias, includendo la directory dove risiedono
+alias archive="$SRCDIR/archive.sh"
+alias backup="$SRCDIR/backup.sh"
+alias fix_name="$SRCDIR/fix_name.sh"
+alias check_name="$SRCDIR/check_name.sh"
+
+# README leggero
+echo
+echo -e "\e[1;47;94m"
+echo -e "==== Hai abilitato i comandi per la manutenzione dell'archivio fotografico ===="
+echo -e "Comandi disponibili:"
+echo -e "* archive: archivia la directory corrente"
+echo -e "* backup: con opzioni -n (dry-run) e -y (silenzioso) per fare il backup"
+echo -e "* check_name: controlla la conformità di nomi di archivi e immagini"
+echo -e "* fix_name: prende come parametro un insieme di archivi, sistema i filename e"
+echo -e "  fa un nuovo backup"
+echo -e "Il manuale è nel file /home/augusto/ScriptFoto/README.pdf"
+
+echo -e "===============================================================================\e[0m"
+echo
