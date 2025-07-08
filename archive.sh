@@ -94,10 +94,12 @@ if [ -d "$ARCHIVIO/$dn" ]; then
   echo -n ">"
   read
 fi
-
-echo rsync
-
 rsync -av . "$ARCHIVIO/$dn"
+
+echo -e "Ora elaboro i nomi dei file nel nuovo archivio"
+echo -e "Se preferisci che mi fermi qui premi CTRL-C?"
+echo -n ">"
+read
 
 $SRCDIR/fix_name.sh $dn
 

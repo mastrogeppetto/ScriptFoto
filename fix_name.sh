@@ -83,7 +83,7 @@ do
       fn=$(basename "$img")
       dn=$(dirname "$img")
 #      echo $img - $dn - $fn
-      if ! [[ "$fn" =~ $IMGREGEX ]]; then
+      if [[ ! "$fn" =~ $IMGREGEX ]]; then
 # Il nome del file non è conforme, e provo a trattarlo con exiftool     
         if ! exiftool -if 'defined $DateTimeOriginal' -d %Y%m%d-%H%M%S- -filename'<${DateTimeOriginal}${Model;}%-c.%e' "$img" > /dev/null
 # se i campi EXIF non sono definiti
@@ -91,12 +91,19 @@ do
 #    ma si tratta di un file whatsapp, lo rinomino a partire dal nome del file
           if [[ "$fn" =~ $WAREGEX ]]; then
             newname="$dn/${BASH_REMATCH[2]}-000000-WhatsApp_${BASH_REMATCH[3]}"
-            if diff -q "$img" "$newname"; then
+#    Se esiste già un file con il nome calcolato
+            if [ -f "$newname" ]; then
+#       se il contenuto è identico, sostituisco
+              if diff -q "$img" "$newname"; then
                 echo "File omonimi uguali: sostituisco"
+                echo $img
+                echo $newname
                 mv "$img" "$newname"
-            else
+              else
+#       altrimenti faccio un backup
                 echo "File omonimi diversi: faccio un backup "              
                 mv --backup=numbered "$img" "$newname"
+              fi
             fi
           else
 #    altrimenti creo un filename conforme con la data dell'archivio e il nome del file stesso, con un
