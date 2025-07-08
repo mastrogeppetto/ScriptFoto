@@ -1,19 +1,29 @@
 ### ORGANIZZAZIONE DELLA DIRECTORY DELLE FOTO
 
-La directory Archivio contiene l'archivio delle foto di famiglia organizzate in sottodirectory corrispondenti ad eventi per cui sono state scattate delle foto.
+La directory Archivio contiene l'archivio delle foto di famiglia organizzate in sottodirectory corrispondenti agli eventi per cui sono state scattate le foto.
 
 Il nome delle directory ha un formato definito: yyyymmdd-titolo. La prima parte è la data associata all'evento, il secondo è un titolo descrittivo. Nel titolo non va inserito il -, che è riservato a separatore tra data e titolo, e il carattere spazio, perché complica inutilmente la vita. Il titolo "varie" serve a collezionare foto relative ad un periodo, senza eventi definiti. Il sottocampo del numero del giorno può essere 00, ad indicare che le foto sono relative ad un mese, piuttosto che un giorno. Simile per il campo del mese.
 
 Il nome del file ha un formato definito: yyyymmdd-hhmmss-marca. Il primo campo è la data, la seconda l'ora di scatto, il terzo il tipo dell'apparecchio che ha scattato la foto. Nel caso di tratti di foto scaricate da whatsapp il campo della data viene estratto dal nome della foto, l'ora è sostituita da 000000, ma marca dalla string "WhatApp" se guita dalla parte finale del nome originale del file. I file che non sono foto vengono denominati inserendo la data presente nella directory archivio, la sequenza 000000 per l'ora, e la stringa "EXTRA" seguita dal nome originale del file.
+
+### Registrazione di una nuova directory ###
+
+Per realizzare una nuova directory nell'archivio, si parte creando, nella propria home, sulla scrivania o dove più opportuno, una nuova directory, denominandola secondo la regola YYYYMMDD-titolo.
+Successivamente si spostano nella directory tutte le foto relative all'evento. Se si ritiene opportuno, le foto possono essere ulteriormente organizzate in sottodirectory, ad esempio per raggrupparle per giorno, autore o altro.
+Terminata l'organizzazione delle foto si apre un terminale nella stessa directory (tasto destro, Apri nel terminale).
+Il terminale deve prima essere abilitato alla gestione delle foto con il comando `source /home/augusto/ScriptFoto/setFotoEnv`, quindi si digita il comando `archive`.
+L'esecuzione del comando si svolge attraverso un certo numero di passi, al termine di ciascuno viene chiesta conferma per la continuazione.
+* Vengono esaminati i file e ne viene stampato un sommario: quelli con nome già correttamente formattato, quelli che contengono le informazioni per la generazione di un nome corretto, le immagini da whatsapp che vengono trattate in modo speciale, e per finire i file di cui non è possibile definire il nome conforme. QUesti andrebbero rimossi, se inutili, o denominati con un nome corretto YYYYMMDD-HHMMSS-<Descrizione>.
+*  
 
 ### Utilizzo degli script ###
 
 Per utilizzare gli script 
 * aprire un terminale
 * spostarsi in questa directory
-* digitare il comando `source ./setFotoEnv`
+* digitare il comando `source /home/augusto/ScriptFoto/setFotoEnv`
  
-Il prompt della riga di comando cambia, ad indicare che sono state definite le variabili d'ambiente che abilitano gli script.
+Il prompt della riga di comando cambia, ad indicare che sono state definite le variabili d'ambiente che abilitano gli script e viene visualizzata una sinossi dei comandi disponibili.
 
 ### Procedura di verifica della conformità dei nomi di directory e immagini
 

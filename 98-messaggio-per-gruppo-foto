@@ -3,7 +3,5 @@ if id -Gn $(logname) | grep -qw "foto"; then
   echo "\e[34m=====================================================\e[0m"
   echo "\e[36mPer abilitare la gestione delle foto digita il comando:\e[0m"
   echo "\e[0;93msource /home/augusto/ScriptFoto/setFotoEnv\e[0m"
-  echo "\e[36mPer visualizzare il manuale digita il comando:\e[0m"
-  echo "\e[0;93mevince /home/augusto/ScriptFoto/UserManual.pdf\e[0m"
   echo "\e[34m=====================================================\e[0m"
 fi
