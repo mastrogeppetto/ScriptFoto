@@ -84,10 +84,27 @@ do
       dn=$(dirname "$img")
 #      echo $img - $dn - $fn
       if [[ ! "$fn" =~ $IMGREGEX ]]; then
-# Il nome del file non è conforme, e provo a trattarlo con exiftool     
-        if ! exiftool -if 'defined $DateTimeOriginal' -d %Y%m%d-%H%M%S- -filename'<${DateTimeOriginal}${Model;}%-c.%e' "$img" > /dev/null
-# se i campi EXIF non sono definiti
+# Il nome del file non è conforme, e provo a trattarlo con exiftool
+        if exiftool -if '$DateTimeOriginal' "$img" &>/dev/null
         then
+          newname=$(exiftool -d %Y%m%d-%H%M%S- -p '${DateTimeOriginal}${Model;}.${FileTypeExtension}' "$img")
+#    Se esiste già un file con il nome calcolato
+          if [ -f "$newname" ]; then
+#       se il contenuto è identico, sostituisco
+            if diff -q "$img" "$newname" 2> /dev/null; then
+              echo 'File omonimi uguali: sostituisco'
+              mv "$img" "$newname"
+            else
+#       altrimenti faccio un backup
+              echo "File omonimi diversi: faccio un backup "              
+              mv --backup=numbered "$img" "$newname"
+            fi
+#     Se non esiste un file con il nuovo nome rinomino
+          else
+            mv "$img" "$newname" 
+          fi
+# se i campi EXIF non sono definiti
+      else
 #    ma si tratta di un file whatsapp, lo rinomino a partire dal nome del file
           if [[ "$fn" =~ $WAREGEX ]]; then
             newname="$dn/${BASH_REMATCH[2]}-000000-WhatsApp_${BASH_REMATCH[3]}"
@@ -96,14 +113,14 @@ do
 #       se il contenuto è identico, sostituisco
               if diff -q "$img" "$newname"; then
                 echo "File omonimi uguali: sostituisco"
-                echo $img
-                echo $newname
                 mv "$img" "$newname"
               else
 #       altrimenti faccio un backup
                 echo "File omonimi diversi: faccio un backup "              
                 mv --backup=numbered "$img" "$newname"
               fi
+            else
+              mv "$img" "$newname"
             fi
           else
 #    altrimenti creo un filename conforme con la data dell'archivio e il nome del file stesso, con un
@@ -117,7 +134,10 @@ do
                 echo "File omonimi diversi: faccio un backup "              
                 mv --backup=numbered "$img" "$newname"
               fi
+            else
+              mv "$img" "$newname"
             fi
+            
           fi
 #     visualizzo l'operazione
           echo "$img -> $newname"

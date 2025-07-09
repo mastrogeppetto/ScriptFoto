@@ -94,7 +94,9 @@ if [ -d "$ARCHIVIO/$dn" ]; then
   echo -n ">"
   read
 fi
+echo -e "\e[2m"
 rsync -av . "$ARCHIVIO/$dn"
+echo -e "\e[0m"
 
 echo -e "Ora elaboro i nomi dei file nel nuovo archivio"
 echo -e "Se preferisci che mi fermi qui premi CTRL-C?"
